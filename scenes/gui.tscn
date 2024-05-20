@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://dbg1ty3tobagi"]
+
+[ext_resource type="Script" path="res://scripts/gui.gd" id="1_ijvcl"]
+
+[node name="GUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ijvcl")
+
+[node name="Background" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(1280, 720)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.153077, 0.153077, 0.153077, 1)
+
+[node name="GridContainer" type="GridContainer" parent="Background"]
+custom_minimum_size = Vector2(1280, 720)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 8

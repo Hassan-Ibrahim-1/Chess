@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://slsinwsu3ah2"]
+
+[ext_resource type="Script" path="res://scripts/square.gd" id="1_ohsod"]
+
+[node name="Square" type="ColorRect"]
+custom_minimum_size = Vector2(86, 86)
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.892062, 0.562678, 0.251409, 1)
+script = ExtResource("1_ohsod")
+alternate_color = Color(1, 0.851076, 0.695415, 1)
+highlight_color = Color(0.991916, 0.783526, 0.259942, 1)

@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://5b8m4hp76jpr"]
+
+[ext_resource type="Script" path="res://scripts/arrow.gd" id="1_hk7ge"]
+[ext_resource type="PackedScene" uid="uid://7c7qx7f0r8a3" path="res://scenes/triangle.tscn" id="1_hxvwh"]
+
+[node name="Arrow" type="Node2D"]
+z_index = 2
+position = Vector2(1, -14)
+scale = Vector2(1, 0.87)
+script = ExtResource("1_hk7ge")
+
+[node name="ArrowBody" type="ColorRect" parent="."]
+offset_left = -7.0
+offset_top = 6.89655
+offset_right = 8.0
+offset_bottom = 46.8966
+color = Color(1, 1, 0.34902, 0.407843)
+metadata/_edit_group_ = true
+
+[node name="ArrowHead" parent="." instance=ExtResource("1_hxvwh")]
+position = Vector2(-11, -11.3)
+scale = Vector2(0.359375, 0.287356)
+color = Color(1, 1, 0.34902, 0.407843)
+polygon = PackedVector2Array(0, 64, 30.8966, 0, 64, 64)

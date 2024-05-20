@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6jahyhyqyu2h"]
+
+[ext_resource type="Script" path="res://scripts/board.gd" id="1_b023i"]
+
+[node name="ChessBoard" type="Node"]
+script = ExtResource("1_b023i")
