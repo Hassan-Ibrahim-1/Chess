@@ -9,6 +9,7 @@ class_name Square
 var default_color: Color = color
 var ID: int
 var piece_on_square: Piece = null # Null if there is no piece
+var is_highlighted: bool = false
 
 func set_alternate_color():
 	color = alternate_color
@@ -16,9 +17,11 @@ func set_alternate_color():
 	
 func set_highlight_color():
 	color = highlight_color
+	is_highlighted = true
 	
 func set_default_color():
 	color = default_color
+	is_highlighted = false
 	
 func remove_piece():
 	if piece_on_square != null:
@@ -62,4 +65,4 @@ func _input(event):
 	# IF RMB has been released on a square - used for determining the target square of an arrow
 	elif event.is_action_released("mouse_right_click"):
 		if get_rect().has_point(event.position):
-			EventBus.right_click_release.emit(get_global_mouse_position())
+			EventBus.right_click_release.emit(get_global_mouse_position(), self)

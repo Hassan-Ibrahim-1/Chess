@@ -1,0 +1,5 @@
+res://scenes/game.tscn
+res://scripts/gamemanager.gd
+res://scenes/square.tscn
+res://scripts/eventbus.gd
+res://scripts/square.gd

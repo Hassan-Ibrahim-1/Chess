@@ -23,7 +23,7 @@ func _on_square_click(square: Square):
 	elif click_count == 1:
 		click_count = 2
 	#Always highlight a square on click
-	square.set_highlight_color()
+
 	if click_count == 2:
 		# On two clicks check if the previous square had a piece on it
 		# If it did then move that piece to the square that has just been clicked
@@ -61,9 +61,14 @@ func _on_square_right_click(mouse_pos: Vector2):
 # Records the target square of the arrow
 # The target square is the square that the RMB is released on
 # Calls gui.draw() which draws the arrow
-func _on_square_right_click_release(mouse_pos: Vector2):
+func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 		
 		gui.draw_arrow(arrow_start_pos, mouse_pos)
+		
+		if square.is_highlighted:
+			square.set_default_color()
+		else:
+			square.set_highlight_color()
 		
 func make_move(target_square: Square):
 	# Makes a move - uses the global prev_square_clicked as the start square
