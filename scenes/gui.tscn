@@ -26,12 +26,3 @@ offset_bottom = 40.0
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 8
-
-[node name="ColorToMoveText" type="TextEdit" parent="Background"]
-custom_minimum_size = Vector2(200, 50)
-layout_direction = 1
-layout_mode = 2
-offset_left = 964.0
-offset_top = 332.0
-offset_right = 1164.0
-offset_bottom = 382.0
