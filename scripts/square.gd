@@ -10,6 +10,8 @@ var default_color: Color = color
 var ID: int
 var piece_on_square: Piece = null # Null if there is no piece
 var is_highlighted: bool = false
+# Used to add an indicator to display whether a piece can move to this square or not
+var indicate_legal_move: bool = false
 
 func set_alternate_color():
 	color = alternate_color

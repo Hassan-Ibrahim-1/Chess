@@ -2,20 +2,6 @@ class_name Piece
 
 extends Node2D
 
-enum PIECE_COLOR {
-	WHITE = 0,
-	BLACK = 1,
-}
-
-enum PIECE_TYPES {
-	PAWN,
-	BISHOP,
-	KNIGHT,
-	ROOK,
-	QUEEN,
-	KING,
-}
-
 # var occupied_square: Square
 var piece_type: int
 var piece_color: int
@@ -31,7 +17,7 @@ var drag_offset := Vector2(-50, -50)
 
 # Sets up the values needed for a piece scene
 # Called manually
-func init(p_type: int = 0, p_color: int = 0):
+func init(p_type: int = -1, p_color: int = -1):
 	piece_type = p_type
 	piece_color = p_color
 
@@ -77,20 +63,34 @@ func set_icon():
 	
 	match piece_type:
 		
-		PIECE_TYPES.PAWN:
+		Board.PIECE_TYPES.PAWN:
 			piece_name = "pawn"
-		PIECE_TYPES.BISHOP:
+		Board.PIECE_TYPES.BISHOP:
 			piece_name = "bishop"
-		PIECE_TYPES.KNIGHT:
+		Board.PIECE_TYPES.KNIGHT:
 			piece_name = "knight"
-		PIECE_TYPES.ROOK:	
+		Board.PIECE_TYPES.ROOK:	
 			piece_name = "rook"
-		PIECE_TYPES.QUEEN:
+		Board.PIECE_TYPES.QUEEN:
 			piece_name = "queen"
-		PIECE_TYPES.KING:
+		Board.PIECE_TYPES.KING:
 			piece_name = "king"      
 		_:
 			print_debug("Unexpected piece type")
 			
 	var texture_path = load("res://assets/" + str(piece_color) + piece_name + ".png")
 	piece_icon.texture = texture_path
+
+func is_sliding_piece() -> bool:
+	## Checks if the piece is a sliding piece
+	# Sliding pieces include the bishop, rook, queen, 
+	
+	if piece_type == Board.PIECE_TYPES.BISHOP:
+		return true
+	elif piece_type == Board.PIECE_TYPES.ROOK:
+		return true
+	elif piece_type == Board.PIECE_TYPES.QUEEN:
+		return true
+		
+	return false
+	
