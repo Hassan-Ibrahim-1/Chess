@@ -51,8 +51,8 @@ func create_board():
 	var test_fen: String = "4kb1r/p4ppp/4q3/8/8/1B6/PPP2PPP/2KR4 w ---- 32 20"
 	
 	FENUtils.init(square_arr)
-	FENUtils.load_fen(test_fen)
-	#FENUtils.load_fen(opening_fen)
+	#FENUtils.load_fen(test_fen)
+	FENUtils.load_fen(opening_fen)
 
 func setup_empty_squares():
 	## Sets up a board with no pieces
@@ -164,14 +164,21 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		return
 	
 	var direction_index: int
+	var adjacent_direction_indices: Array[int]
 	
 	# Determines the direction in which the pawn can go
 	if piece.piece_color == PIECE_COLOR.WHITE:
 		# North
 		direction_index = 0
+		
+		# Northeast and Northwest
+		adjacent_direction_indices = [4, 7]
 	else:
 		# South
 		direction_index = 1
+		
+		# Southeast and Southwest
+		adjacent_direction_indices = [5, 6]
 	
 	# How many squares forward the pawn can move 
 	var squares_to_move: int = 1
@@ -195,6 +202,18 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				break
 		
 		legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+		
+	for adjacent_direction_index in adjacent_direction_indices:
+		
+		var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
+		
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		
+		# If there is a piece on an adjacent square
+		# If that piece is an any piece than a capture is possible
+		if piece_on_target_square != null:
+			if piece.piece_color != piece_on_target_square.piece_color:
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
 
 	
 func create_square():

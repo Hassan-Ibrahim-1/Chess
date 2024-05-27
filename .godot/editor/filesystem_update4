@@ -6,3 +6,7 @@ res://scripts/move.gd
 res://scripts/gamemanager.gd
 res://scenes/piece.tscn
 res://scripts/piece.gd
+res://scripts/arrow.gd
+res://scripts/eventbus.gd
+res://scripts/gui.gd
+res://scripts/square.gd
