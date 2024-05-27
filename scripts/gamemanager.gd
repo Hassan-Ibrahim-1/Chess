@@ -34,9 +34,15 @@ func _on_square_click(square: Square):
 		click_count = 0
 		
 		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
-			if prev_square_clicked.piece_on_square.is_sliding_piece():
+			# TODO: get rid of this conditional after all legal moves have been implemented
+			if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
 				var legal_moves = Board.generate_moves()
 				if is_move_legal(square, legal_moves):
+					# If a pawn is about to promote - make it a queen
+					# TODO: change this later to include all promotion pieces
+					if prev_square_clicked.piece_on_square.promoting:
+						prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
+						prev_square_clicked.piece_on_square.set_icon()
 					make_move(square)
 			else:
 				make_move(square)
@@ -54,9 +60,15 @@ func _on_square_release(square: Square):
 	# Even though the piece moved click count is still 1 - this causes bugs - piece not behaving right after dragging
 	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 		click_count = 0
-		if prev_square_clicked.piece_on_square.is_sliding_piece():
+		# TODO: get rid of this conditional after all legal moves have been implemented
+		if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
 			var legal_moves = Board.generate_moves()
 			if is_move_legal(square, legal_moves):
+				if prev_square_clicked.piece_on_square.promoting:
+					# TODO: Change this later to include all possible promotion pieces
+					# Promotes the pawn to a queen if it is moving to a promotion square
+					prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
+					prev_square_clicked.piece_on_square.set_icon()
 				make_move(square)
 		else:
 			make_move(square)
