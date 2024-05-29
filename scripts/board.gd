@@ -128,12 +128,16 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 	var start_index: int = 0
 	var end_index: int = 8
 	
+	# Diagonal directions only
 	if piece.piece_type == PIECE_TYPES.BISHOP:
 		start_index = 4
+		
+	# Horizontal and vertical direction only
 	elif piece.piece_type == PIECE_TYPES.ROOK:
 		end_index = 4
 		
 	for direction_index in range(start_index, end_index):
+			# n is how many squares till the edge of the board in a given direction
 		for n in range(num_squares_to_edge[start_square.ID][direction_index]):
 			
 			var target_square_id: int = start_square.ID + (direction_offsets[direction_index]) * (n + 1)
@@ -155,8 +159,62 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 	return legal_moves
 	
 func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
-	# Direction index for north
-	var direction_index: int = 0
+	
+	if piece.piece_type != PIECE_TYPES.PAWN:
+		return
+	
+	var direction_index: int
+	var adjacent_direction_indices: Array[int]
+	
+	# Determines the direction in which the pawn can go
+	if piece.piece_color == PIECE_COLOR.WHITE:
+		# North
+		direction_index = 0
+		
+		# Northeast and Northwest
+		adjacent_direction_indices = [4, 7]
+	else:
+		# South
+		direction_index = 1
+		
+		# Southeast and Southwest
+		adjacent_direction_indices = [5, 6]
+	
+	# How many squares forward the pawn can move 
+	var squares_to_move: int = 1
+	
+	# If there is only one square in front of the pawn then set promoting to true
+	if num_squares_to_edge[start_square.ID][direction_index] == 1:
+		piece.promoting = true
+	
+	# Enables 2 move pawn pushes if the pawn is on the starting square
+	if is_on_starting_square(piece, start_square.ID):
+		squares_to_move = 2
+	
+	for n in range(squares_to_move):
+		
+		var target_square_id: int = start_square.ID + (direction_offsets[direction_index]) * (n + 1)
+		
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		
+		# Blocked by any piece - the pawn can't move forward
+		if piece_on_target_square != null:
+				break
+		
+		legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+		
+	for adjacent_direction_index in adjacent_direction_indices:
+		
+		var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
+		
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		
+		# If there is a piece on an adjacent square
+		# If that piece is an any piece than a capture is possible
+		if piece_on_target_square != null:
+			if piece.piece_color != piece_on_target_square.piece_color:
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+
 	
 func create_square():
 	var new_square: Square = square_scene.instantiate()
@@ -171,12 +229,9 @@ func clear_board():
 func is_on_starting_square(piece: Piece, piece_square_id: int) -> bool:
 	
 	# Contains IDs of starting squares for white and black
-	var white_starting_squares: Array[int] = range(48, 56)
-	var black_starting_squares: Array[int] = range(8, 16)
+	var white_starting_squares: Array = range(48, 56)
+	var black_starting_squares: Array = range(8, 16)
 	
-	if piece.piece_type != PIECE_TYPES.PAWN:
-		return false
-		
 	if piece.piece_color == PIECE_COLOR.WHITE:
 		
 		if piece_square_id in white_starting_squares:
@@ -184,7 +239,7 @@ func is_on_starting_square(piece: Piece, piece_square_id: int) -> bool:
 			
 	else:
 		if piece_square_id in black_starting_squares:
-			return false
+			return true
 			
 	return false
 
