@@ -1,6 +1,6 @@
-class_name Move
-
 extends Node
+
+class_name Move
 
 var start_square: Square
 var target_square: Square

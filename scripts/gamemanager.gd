@@ -18,6 +18,7 @@ func _ready():
 
 func _on_square_click(square: Square):
 	gui.clear_arrows()
+	gui.clear_highlighted_squares()
 	print_debug(square.ID)
 	if (square.piece_on_square != null) and (click_count == 0):
 		click_count = 1
@@ -34,15 +35,9 @@ func _on_square_click(square: Square):
 		click_count = 0
 		
 		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
-			# TODO: get rid of this conditional after all legal moves have been implemented
-			if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
+			if prev_square_clicked.piece_on_square.is_sliding_piece():
 				var legal_moves = Board.generate_moves()
 				if is_move_legal(square, legal_moves):
-					# If a pawn is about to promote - make it a queen
-					# TODO: change this later to include all promotion pieces
-					if prev_square_clicked.piece_on_square.promoting:
-						prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-						prev_square_clicked.piece_on_square.set_icon()
 					make_move(square)
 			else:
 				make_move(square)
@@ -52,6 +47,8 @@ func _on_square_click(square: Square):
 		prev_square_clicked.set_default_color()
 		
 	prev_square_clicked = square
+	
+
 
 func _on_square_release(square: Square):
 	# If the square the mouse is released is not the previusly clicked square
@@ -60,15 +57,9 @@ func _on_square_release(square: Square):
 	# Even though the piece moved click count is still 1 - this causes bugs - piece not behaving right after dragging
 	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 		click_count = 0
-		# TODO: get rid of this conditional after all legal moves have been implemented
-		if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
+		if prev_square_clicked.piece_on_square.is_sliding_piece():
 			var legal_moves = Board.generate_moves()
 			if is_move_legal(square, legal_moves):
-				if prev_square_clicked.piece_on_square.promoting:
-					# TODO: Change this later to include all possible promotion pieces
-					# Promotes the pawn to a queen if it is moving to a promotion square
-					prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-					prev_square_clicked.piece_on_square.set_icon()
 				make_move(square)
 		else:
 			make_move(square)
@@ -84,12 +75,19 @@ func _on_square_right_click(mouse_pos: Vector2):
 func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 	gui.draw_arrow(arrow_start_pos, mouse_pos)
 	
+
+	
+
+	
 	if square.is_highlighted:
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
 		
+
+
 func make_move(target_square: Square):
+	$AudioStreamPlayer.play()
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
