@@ -1,6 +1,3 @@
 res://scenes/game.tscn
-res://scenes/square.tscn
-res://scenes/gui.tscn
-res://scripts/square.gd
-res://scripts/gamemanager.gd
-res://scripts/eventbus.gd
+res://scenes/fen_utils.tscn
+res://scenes/move.tscn

@@ -18,6 +18,7 @@ func _ready():
 
 func _on_square_click(square: Square):
 	gui.clear_arrows()
+	gui.clear_highlighted_squares()
 	print_debug(square.ID)
 	if (square.piece_on_square != null) and (click_count == 0):
 		click_count = 1
@@ -46,6 +47,8 @@ func _on_square_click(square: Square):
 		prev_square_clicked.set_default_color()
 		
 	prev_square_clicked = square
+	
+
 
 func _on_square_release(square: Square):
 	# If the square the mouse is released is not the previusly clicked square
@@ -72,12 +75,19 @@ func _on_square_right_click(mouse_pos: Vector2):
 func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 	gui.draw_arrow(arrow_start_pos, mouse_pos)
 	
+
+	
+
+	
 	if square.is_highlighted:
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
 		
+
+
 func make_move(target_square: Square):
+	$AudioStreamPlayer.play()
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
