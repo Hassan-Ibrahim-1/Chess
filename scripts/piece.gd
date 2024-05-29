@@ -6,9 +6,6 @@ extends Node2D
 var piece_type: int
 var piece_color: int
 
-# Used to denote if a pawn can promote on its next move
-var promoting: bool = false
-
 @onready var piece_icon = $PieceIcon
 
 # Enabled when the mouse is clicked and hovers on a square that contains a piece

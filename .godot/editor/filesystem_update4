@@ -1,11 +1,3 @@
 res://scenes/game.tscn
 res://scenes/fen_utils.tscn
 res://scenes/move.tscn
-res://scripts/arrow.gd
-res://scripts/board.gd
-res://scripts/eventbus.gd
-res://scripts/fenutils.gd
-res://scripts/gamemanager.gd
-res://scripts/gui.gd
-res://scripts/move.gd
-res://scripts/square.gd
