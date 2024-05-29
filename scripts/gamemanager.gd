@@ -93,7 +93,7 @@ func make_move(target_square: Square):
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
-	
+	$AudioStreamPlayer2D.play()
 	var move : Move = Move.new(prev_square_clicked, target_square)
 	Board.move_piece(prev_square_clicked.piece_on_square, move)
 	EventBus.piece_moved.emit(target_square)
