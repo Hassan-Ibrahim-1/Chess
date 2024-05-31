@@ -18,6 +18,7 @@ var square_scene = preload("res://scenes/square.tscn")
 var piece_scene = preload("res://scenes/piece.tscn")
 
 var square_arr: Array[Square]
+var moves_played: Array[Move]
 
 # An array containing arrays of number of squares to edge
 # First array has 64 elements each representing a square on the board
@@ -149,7 +150,7 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 				if piece_on_target_square.piece_color == piece.piece_color:
 					break
 			
-			legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
 			
 			# Blocked by an enemy piece - a capture is possible but can't move any further
 			if piece_on_target_square != null:
@@ -201,7 +202,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		if piece_on_target_square != null:
 				break
 		
-		legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
 		
 	for adjacent_direction_index in adjacent_direction_indices:
 		
@@ -213,7 +214,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		# If that piece is an any piece than a capture is possible
 		if piece_on_target_square != null:
 			if piece.piece_color != piece_on_target_square.piece_color:
-				legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
 
 	
 func create_square():
