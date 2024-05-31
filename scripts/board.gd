@@ -150,7 +150,7 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 				if piece_on_target_square.piece_color == piece.piece_color:
 					break
 			
-			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
+			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
 			
 			# Blocked by an enemy piece - a capture is possible but can't move any further
 			if piece_on_target_square != null:
@@ -166,6 +166,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 	
 	var direction_index: int
 	var adjacent_direction_indices: Array[int]
+	var horizontal_direction_indices := [2, 3]
 	
 	# Determines the direction in which the pawn can go
 	if piece.piece_color == PIECE_COLOR.WHITE:
@@ -179,7 +180,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		direction_index = 1
 		
 		# Southeast and Southwest
-		adjacent_direction_indices = [5, 6]
+		adjacent_direction_indices = [6, 5]
 	
 	# How many squares forward the pawn can move 
 	var squares_to_move: int = 1
@@ -202,8 +203,9 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		if piece_on_target_square != null:
 				break
 		
-		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
+		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
 		
+	# Checking for adjacent square captures
 	for adjacent_direction_index in adjacent_direction_indices:
 		
 		var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
@@ -214,9 +216,44 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		# If that piece is an any piece than a capture is possible
 		if piece_on_target_square != null:
 			if piece.piece_color != piece_on_target_square.piece_color:
-				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece.piece_type))
-
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
 	
+	# Checking for en passant
+	for horizontal_direction_index in horizontal_direction_indices:
+		
+		# Game just started so no moves have been played
+		if moves_played.size() == 0:
+			break
+			
+		var horizontal_square_id: int = start_square.ID + direction_offsets[horizontal_direction_index]
+		
+		
+		var prev_move: Move = moves_played[-1]
+		
+		if prev_move.target_square.ID == horizontal_square_id:
+			
+			if prev_move.piece.piece_type != PIECE_TYPES.PAWN:
+				continue
+				
+			var adjacent_direction_index: int
+				
+			# Pawn just moved to the left
+			if horizontal_direction_index == 2:
+				adjacent_direction_index = adjacent_direction_indices[0]
+			
+			# Pawn just moved to the right
+			else: 
+				adjacent_direction_index = adjacent_direction_indices[1]
+			
+			var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
+			
+			var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+			
+			# If there is no piece behind the pawn that just moved
+			# Then en passant is possible
+			if piece_on_target_square == null:
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+			
 func create_square():
 	var new_square: Square = square_scene.instantiate()
 	new_square.ID = square_arr.size()

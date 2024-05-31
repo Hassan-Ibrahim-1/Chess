@@ -4,10 +4,10 @@ extends Node
 
 var start_square: Square
 var target_square: Square
-var piece_type: int
+var piece: Piece
 var side_color: int # Add to _init later
 
-func _init(st_square: Square, targ_square: Square, p_type: int):
-	start_square = st_square
-	target_square = targ_square
-	piece_type = p_type
+func _init(s_square: Square, t_square: Square, p: Piece):
+	start_square = s_square
+	target_square = t_square
+	piece = p

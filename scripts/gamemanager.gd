@@ -94,16 +94,20 @@ func make_move(target_square: Square):
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
 	$AudioStreamPlayer2D.play()
-	var move : Move = Move.new(prev_square_clicked, target_square)
+	
+	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	Board.move_piece(prev_square_clicked.piece_on_square, move)
+	
+	Board.moves_played.append(move)
+	
 	EventBus.piece_moved.emit(target_square)
+	
 	prev_square_clicked.set_default_color()
 	target_square.set_highlight_color()
 	prev_square_clicked = target_square
 
 func is_move_legal(target_square: Square, legal_moves: Array[Move]):
-	var move : Move = Move.new(prev_square_clicked, target_square)
-			
+	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	for legal_move in legal_moves:
 		# TODO: Change this to a function later
 		if move.start_square.ID == legal_move.start_square.ID and move.target_square.ID == legal_move.target_square.ID:
