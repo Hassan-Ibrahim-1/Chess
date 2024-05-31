@@ -42,7 +42,11 @@ func _ready():
 
 func move_piece(piece: Piece, move: Move):
 	move.start_square.remove_piece()
+	# Removes any piece that may be on the target square
+	# Thereby capturing that piece
+	move.target_square.remove_piece()
 	move.target_square.add_piece(piece)
+
 
 func create_board():
 	## Sets up a full board with the opening position
@@ -253,6 +257,8 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 			# Then en passant is possible
 			if piece_on_target_square == null:
 				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+				# Captures the piece that the pawn just moved besides
+				square_arr[horizontal_square_id].remove_piece()
 			
 func create_square():
 	var new_square: Square = square_scene.instantiate()
