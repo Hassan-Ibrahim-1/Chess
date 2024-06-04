@@ -32,6 +32,10 @@ var num_squares_to_edge: Array[Array]
 # directions share the same indices as the direction of the num_squares_to_edge array
 var direction_offsets: Array[int] = [-8, 8, -1, 1, -9, 9, 7, -7]
 
+# Used to figure out where the knight can move
+# Top right, Top left, Right up, Right down, Left up, Left down, Down right, Down left
+var knight_offsets: Array[int] = [-15, -17, -6, 10, -10, -6, 17, 15]
+
 # Set to the opposite color every move - default is white
 var color_to_move: int = PIECE_COLOR.WHITE
 
@@ -122,6 +126,8 @@ func generate_moves() -> Array[Move]:
 				generate_sliding_moves(square, piece, legal_moves)
 			elif piece.piece_type == PIECE_TYPES.PAWN:
 				generate_pawn_moves(square, piece, legal_moves)
+			elif piece.piece_type == PIECE_TYPES.KNIGHT:
+				generate_knight_moves(square, piece, legal_moves)
 	
 	return legal_moves
 	
@@ -130,6 +136,7 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 	# These two variables are used to determine the direction that a sliding piece can go
 	# ie - rooks can only move horizontally and bishops can only move diagonally
 	# Used to determine where to start reading num_squares_to_edge
+	# Default values are for Queen - can move in all directions
 	var start_index: int = 0
 	var end_index: int = 8
 	
@@ -164,9 +171,6 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 	return legal_moves
 	
 func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
-	
-	if piece.piece_type != PIECE_TYPES.PAWN:
-		return
 	
 	var direction_index: int
 	var adjacent_direction_indices: Array[int]
@@ -264,6 +268,24 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				# Captures the piece that the pawn just moved besides
 				square_arr[horizontal_square_id].remove_piece()
 			
+func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
+	
+	for offset in knight_offsets:
+		var target_square_id: int = start_square.ID + offset
+		
+		# Not a valid move
+		if (target_square_id < 0) or target_square_id > 63:
+			continue
+			
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		
+		# If target square has a friendly piece on it then not a legal move
+		if piece_on_target_square != null:
+			if piece_on_target_square.piece_color == piece.piece_color:
+				continue
+		
+		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+
 func create_square():
 	var new_square: Square = square_scene.instantiate()
 	new_square.ID = square_arr.size()

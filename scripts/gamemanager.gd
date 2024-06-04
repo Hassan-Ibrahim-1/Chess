@@ -35,7 +35,7 @@ func _on_square_click(square: Square):
 		
 		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 			# TODO: get rid of this conditional after all legal moves have been implemented
-			if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
+			if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 				var legal_moves = Board.generate_moves()
 				if is_move_legal(square, legal_moves):
 					# If a pawn is about to promote - make it a queen
@@ -61,7 +61,7 @@ func _on_square_release(square: Square):
 	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 		click_count = 0
 		# TODO: get rid of this conditional after all legal moves have been implemented
-		if prev_square_clicked.piece_on_square.is_sliding_piece() or prev_square_clicked.piece_on_square.piece_type == Board.PIECE_TYPES.PAWN:
+		if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 			var legal_moves = Board.generate_moves()
 			if is_move_legal(square, legal_moves):
 				if prev_square_clicked.piece_on_square.promoting:
