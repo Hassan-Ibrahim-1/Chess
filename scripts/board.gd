@@ -228,15 +228,19 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		# Game just started so no moves have been played
 		if moves_played.size() == 0:
 			break
-			
-		var horizontal_square_id: int = start_square.ID + direction_offsets[horizontal_direction_index]
 		
+		# Square ID of the piece next to the pawn
+		var horizontal_square_id: int = start_square.ID + direction_offsets[horizontal_direction_index]
 		
 		var prev_move: Move = moves_played[-1]
 		
 		if prev_move.target_square.ID == horizontal_square_id:
 			
 			if prev_move.piece.piece_type != PIECE_TYPES.PAWN:
+				continue
+			
+			# If the piece has not moved two squares then move on to the next iteration
+			if absi(prev_move.start_square.ID - prev_move.target_square.ID) != 16:
 				continue
 				
 			var adjacent_direction_index: int

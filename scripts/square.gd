@@ -28,7 +28,7 @@ func set_default_color():
 func remove_piece():
 	if piece_on_square != null:
 		remove_child(get_children()[0])
-	piece_on_square = null
+		piece_on_square = null
 
 func add_piece(piece: Piece) -> bool:
 	# Returns true if successful - if there was no piece on the square previously
@@ -40,11 +40,6 @@ func add_piece(piece: Piece) -> bool:
 		return true
 		
 	return false
-	
-func replace_piece(piece: Piece):
-	# Gets rid of the piece on the square and replaces it with the one specified
-	remove_piece()
-	add_piece(piece)
 	
 func _input(event):
 	

@@ -97,7 +97,6 @@ func make_move(target_square: Square):
 	
 	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	Board.move_piece(prev_square_clicked.piece_on_square, move)
-	
 	Board.moves_played.append(move)
 	
 	EventBus.piece_moved.emit(target_square)
