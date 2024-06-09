@@ -113,9 +113,6 @@ func precompute_move_data():
 				min(num_north, num_east), # Northeast
 			])
 			
-			if rank * 8 + file == 58:
-				pass
-
 func generate_moves() -> Array[Move]:
 	var legal_moves: Array[Move] = []
 	
@@ -275,6 +272,24 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				square_arr[horizontal_square_id].remove_piece()
 			
 func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
+	
+	# for offset in knight_offsets:
+	# 	var target_square_id: int = start_square.ID + offset
+		
+	# 	# Not a valid move
+	# 	if (target_square_id < 0) or target_square_id > 63:
+	# 		continue
+			
+	# 	var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		
+	# 	# If target square has a friendly piece on it then not a legal move
+	# 	if piece_on_target_square != null:
+	# 		if piece_on_target_square.piece_color == piece.piece_color:
+	# 			continue
+		
+	# 	legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+
+	# An array of squares that the knight can possibly move to
 	var target_squares: Array[Square]
 
 	# The ID of the square that is squares away from the starting square
@@ -310,11 +325,11 @@ func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Arra
 		square_id = start_square.ID + (direction_offsets[DIRECTION.EAST] * 2)
 
 		# If the knight can move to the top of the rightwards square
-		if num_squares_to_edge[square_id][DIRECTION.NORTH] != 0:
+		if num_squares_to_edge[square_id][DIRECTION.WEST] != 0:
 			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.NORTH]])
 
 		# If the knight can move to the bottom of the rightwards square
-		if num_squares_to_edge[square_id][DIRECTION.SOUTH] != 0:
+		if num_squares_to_edge[square_id][DIRECTION.EAST] != 0:
 			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.SOUTH]])
 	
 	# If the knight can move to the left
