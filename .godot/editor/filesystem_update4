@@ -1,7 +1,6 @@
+res://scripts/board.gd
 res://scenes/game.tscn
 res://scenes/square.tscn
 res://scenes/gui.tscn
 res://scenes/piece.tscn
-res://scripts/square.gd
-res://scripts/board.gd
 res://scripts/gamemanager.gd
