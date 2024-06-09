@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8dmaa7qhpndl"]
+
+[ext_resource type="Texture2D" uid="uid://dc2mmvuhlcg8k" path="res://assets/0bishop.png" id="1_hf1ft"]
+
+[node name="PawnPromotionSelectionMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 86.0
+offset_bottom = 344.0
+theme_override_constants/v_separation = 0
+
+[node name="Button" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+icon = ExtResource("1_hf1ft")
+icon_alignment = 1
