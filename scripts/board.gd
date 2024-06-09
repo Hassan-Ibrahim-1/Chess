@@ -14,8 +14,19 @@ enum PIECE_TYPES {
 	KING,
 }
 
-var square_scene = preload("res://scenes/square.tscn")
-var piece_scene = preload("res://scenes/piece.tscn")
+enum DIRECTION {
+	NORTH,
+	SOUTH,
+	WEST,
+	EAST,
+	NORTHWEST,
+	SOUTHEAST,
+	SOUTHWEST,
+	NORTHEAST
+}
+
+var square_scene = preload ("res://scenes/square.tscn")
+var piece_scene = preload ("res://scenes/piece.tscn")
 
 var square_arr: Array[Square]
 var moves_played: Array[Move]
@@ -30,11 +41,7 @@ var num_squares_to_edge: Array[Array]
 # An array of offsets that is used to figure out how many squares away a direction is
 # ie - how many squares need to be added to reach the northeastern square (immediate top right)
 # directions share the same indices as the direction of the num_squares_to_edge array
-var direction_offsets: Array[int] = [-8, 8, -1, 1, -9, 9, 7, -7]
-
-# Used to figure out where the knight can move
-# Top right, Top left, Right up, Right down, Left up, Left down, Down right, Down left
-var knight_offsets: Array[int] = [-15, -17, -6, 10, -10, -6, 17, 15]
+var direction_offsets: Array[int] = [- 8, 8, - 1, 1, - 9, 9, 7, - 7]
 
 # Set to the opposite color every move - default is white
 var color_to_move: int = PIECE_COLOR.WHITE
@@ -50,7 +57,6 @@ func move_piece(piece: Piece, move: Move):
 	# Thereby capturing that piece
 	move.target_square.remove_piece()
 	move.target_square.add_piece(piece)
-
 
 func create_board():
 	## Sets up a full board with the opening position
@@ -72,8 +78,8 @@ func setup_empty_squares():
 	for x in range(8):
 		for i in range(8):
 			create_square()
-			if i%2 == colorbit:
-				square_arr[x*8+i].set_alternate_color()
+			if i % 2 == colorbit:
+				square_arr[x * 8 + i].set_alternate_color()
 		if colorbit == 0:
 			colorbit = 1
 		else:
@@ -107,7 +113,7 @@ func precompute_move_data():
 				min(num_north, num_east), # Northeast
 			])
 			
-			if rank*8 + file == 58:
+			if rank * 8 + file == 58:
 				pass
 
 func generate_moves() -> Array[Move]:
@@ -236,7 +242,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		# Square ID of the piece next to the pawn
 		var horizontal_square_id: int = start_square.ID + direction_offsets[horizontal_direction_index]
 		
-		var prev_move: Move = moves_played[-1]
+		var prev_move: Move = moves_played[- 1]
 		
 		if prev_move.target_square.ID == horizontal_square_id:
 			
@@ -254,7 +260,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				adjacent_direction_index = adjacent_direction_indices[0]
 			
 			# Pawn just moved to the right
-			else: 
+			else:
 				adjacent_direction_index = adjacent_direction_indices[1]
 			
 			var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
@@ -269,22 +275,67 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				square_arr[horizontal_square_id].remove_piece()
 			
 func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
+	var target_squares: Array[Square]
+
+	# The ID of the square that is squares away from the starting square
+	# Either horizontally or vertically
+	var square_id: int
+
+	# If the knight can move upwards
+	if num_squares_to_edge[start_square.ID][DIRECTION.NORTH] > 1:
+		square_id = start_square.ID + (direction_offsets[DIRECTION.NORTH] * 2)
+
+		# If the knight can move to the left of the upper square
+		if num_squares_to_edge[square_id][DIRECTION.WEST] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.WEST]])
+
+		# If the knight can move to the right of the upper square
+		if num_squares_to_edge[square_id][DIRECTION.EAST] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.EAST]])
+
+	# If the knight can move downwards
+	if num_squares_to_edge[start_square.ID][DIRECTION.SOUTH] > 1:
+		square_id = start_square.ID + (direction_offsets[DIRECTION.SOUTH] * 2)
+
+		# If the knight can move to the left of the lower square
+		if num_squares_to_edge[square_id][DIRECTION.WEST] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.WEST]])
+
+		# If the knight can move to the right of the lower square
+		if num_squares_to_edge[square_id][DIRECTION.EAST] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.EAST]])
+
+	# If the knight can move to the right
+	if num_squares_to_edge[start_square.ID][DIRECTION.EAST] > 1:
+		square_id = start_square.ID + (direction_offsets[DIRECTION.EAST] * 2)
+
+		# If the knight can move to the top of the rightwards square
+		if num_squares_to_edge[square_id][DIRECTION.NORTH] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.NORTH]])
+
+		# If the knight can move to the bottom of the rightwards square
+		if num_squares_to_edge[square_id][DIRECTION.SOUTH] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.SOUTH]])
 	
-	for offset in knight_offsets:
-		var target_square_id: int = start_square.ID + offset
-		
-		# Not a valid move
-		if (target_square_id < 0) or target_square_id > 63:
-			continue
-			
-		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
-		
-		# If target square has a friendly piece on it then not a legal move
-		if piece_on_target_square != null:
-			if piece_on_target_square.piece_color == piece.piece_color:
+	# If the knight can move to the left
+	if num_squares_to_edge[start_square.ID][DIRECTION.WEST] > 1:
+		square_id = start_square.ID + (direction_offsets[DIRECTION.WEST] * 2)
+
+		# If the knight can move to the top of the leftwards square
+		if num_squares_to_edge[square_id][DIRECTION.NORTH] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.NORTH]])
+
+		# If the knight can move to the bottom of the leftwards square
+		if num_squares_to_edge[square_id][DIRECTION.SOUTH] != 0:
+			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.SOUTH]])
+
+	for target_square in target_squares:
+		if target_square.piece_on_square != null:
+			# If its a friendly piece then continue
+			if target_square.piece_on_square.piece_color == piece.piece_color:
 				continue
-		
-		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+
+		legal_moves.append(Move.new(start_square, target_square, piece))
 
 func create_square():
 	var new_square: Square = square_scene.instantiate()
@@ -319,4 +370,3 @@ func _on_piece_move(target_square: Square):
 		color_to_move = PIECE_COLOR.BLACK
 	else:
 		color_to_move = PIECE_COLOR.WHITE
-		
