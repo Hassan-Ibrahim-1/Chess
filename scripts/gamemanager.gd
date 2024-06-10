@@ -79,13 +79,10 @@ func _on_square_release(square: Square):
 				if prev_square_clicked.piece_on_square.promoting:
 					# TODO: Change this later to include all possible promotion pieces
 					# Promotes the pawn to a queen if it is moving to a promotion square
-					var piece_type: int
 					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
 					
 					# Removes piece from board until a signal is emitted
 					prev_square_clicked.piece_on_square.hide()
-
-					# prev_square_clicked.piece_on_square.promote(piece_type)
 
 				else:
 					make_move(square)
@@ -98,22 +95,34 @@ func _on_square_release(square: Square):
 # Records the square that is right clicked on
 # This square is where the arrow starts
 func _on_square_right_click(mouse_pos: Vector2):
-	arrow_start_pos = mouse_pos
+	
+		arrow_start_pos = mouse_pos
 
 # Records the target square of the arrow
 # The target square is the square that the RMB is released on
 # Calls gui.draw_arrow() which draws the arrow
 func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
-	gui.draw_arrow(arrow_start_pos, mouse_pos)
+
+	# If the promotion menu is enabled, delete it and stop execution of the function
+	if gui.promotion_menu_enabled:
+		gui.delete_promotion_menu()
+
+		# Shows the piece that was hidden previously in _on_square_release
+		prev_square_clicked.piece_on_square.show()
+
+		return
 	
+	gui.draw_arrow(arrow_start_pos, mouse_pos)
+
 	if square.is_highlighted:
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
 
 func _on_promotion_piece_chosen(piece_type: int):
-	pass
-		
+	prev_square_clicked.piece_on_square.promote(piece_type)
+	prev_square_clicked.piece_on_square.show()
+
 func make_move(target_square: Square):
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
