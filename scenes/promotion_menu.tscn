@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8dmaa7qhpndl"]
+
+[ext_resource type="Script" path="res://scripts/promotion_menu.gd" id="1_4s04q"]
+
+[node name="PromotionMenu" type="Control"]
+z_index = 4
+custom_minimum_size = Vector2(86, 344)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 1.0
+offset_right = -1178.0
+offset_bottom = -375.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4s04q")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 86.0
+offset_bottom = 344.0
+theme_override_constants/v_separation = 0
+metadata/_edit_group_ = true
+
+[node name="Queen" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+icon_alignment = 1
+
+[node name="Rook" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+icon_alignment = 1
+
+[node name="Knight" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+icon_alignment = 1
+
+[node name="Bishop" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+icon_alignment = 1

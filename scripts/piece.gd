@@ -13,11 +13,11 @@ var piece_color: int
 var dragging_enabled: bool = false
 
 # Offset to center the piece to the mouse
-var drag_offset := Vector2(-50, -50)
+var drag_offset := Vector2( - 50, -50)
 var promoting: bool = false
 # Sets up the values needed for a piece scene
 # Called manually
-func init(p_type: int = -1, p_color: int = -1):
+func init(p_type: int=- 1, p_color: int=- 1):
 	piece_type = p_type
 	piece_color = p_color
 
@@ -69,17 +69,25 @@ func set_icon():
 			piece_name = "bishop"
 		Board.PIECE_TYPES.KNIGHT:
 			piece_name = "knight"
-		Board.PIECE_TYPES.ROOK:	
+		Board.PIECE_TYPES.ROOK:
 			piece_name = "rook"
 		Board.PIECE_TYPES.QUEEN:
 			piece_name = "queen"
 		Board.PIECE_TYPES.KING:
-			piece_name = "king"      
+			piece_name = "king"
 		_:
 			print_debug("Unexpected piece type")
 			
-	var texture_path = load("res://assets/" + str(piece_color) + piece_name + ".png")
-	piece_icon.texture = texture_path
+	piece_icon.texture = load("res://assets/" + str(piece_color) + piece_name + ".png")
+
+## only for pawns
+## Changes the pawn's type to a different specified piece
+func promote(p_type: int):
+	if piece_type != Board.PIECE_TYPES.PAWN:
+		return
+		
+	piece_type = p_type
+	set_icon()
 
 func is_sliding_piece() -> bool:
 	## Checks if the piece is a sliding piece
@@ -93,4 +101,3 @@ func is_sliding_piece() -> bool:
 		return true
 		
 	return false
-	

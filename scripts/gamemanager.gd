@@ -41,8 +41,9 @@ func _on_square_click(square: Square):
 					# If a pawn is about to promote - make it a queen
 					# TODO: change this later to include all promotion pieces
 					if prev_square_clicked.piece_on_square.promoting:
-						prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-						prev_square_clicked.piece_on_square.set_icon()
+						var piece_type: int
+						gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
+						prev_square_clicked.piece_on_square.promote(piece_type)
 					make_move(square)
 			else:
 				make_move(square)
@@ -67,11 +68,15 @@ func _on_square_release(square: Square):
 				if prev_square_clicked.piece_on_square.promoting:
 					# TODO: Change this later to include all possible promotion pieces
 					# Promotes the pawn to a queen if it is moving to a promotion square
-					prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-					prev_square_clicked.piece_on_square.set_icon()
+					var piece_type: int
+					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
+					prev_square_clicked.piece_on_square.promote(piece_type)
 				make_move(square)
 		else:
 			make_move(square)
+		
+		# if is_move_legal(square, legal_moves):
+			# make_move()
 			
 # Records the square that is right clicked on
 # This square is where the arrow starts
@@ -95,7 +100,7 @@ func make_move(target_square: Square):
 	# sets previous square clicked to the target square
 	$AudioStreamPlayer2D.play()
 	
-	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
+	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	Board.move_piece(prev_square_clicked.piece_on_square, move)
 	Board.moves_played.append(move)
 	
@@ -106,7 +111,7 @@ func make_move(target_square: Square):
 	prev_square_clicked = target_square
 
 func is_move_legal(target_square: Square, legal_moves: Array[Move]):
-	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
+	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	for legal_move in legal_moves:
 		# TODO: Change this to a function later
 		if move.start_square.ID == legal_move.start_square.ID and move.target_square.ID == legal_move.target_square.ID:

@@ -1,7 +1,9 @@
-res://scripts/board.gd
 res://scenes/game.tscn
 res://scenes/square.tscn
 res://scenes/gui.tscn
 res://scenes/piece.tscn
-res://scripts/gamemanager.gd
-res://scenes/pawn_promotion_selection_menu.tscn
+res://scenes/promotion_menu.tscn
+res://scripts/gui.gd
+res://scripts/fenutils.gd
+res://scripts/square.gd
+res://scripts/promotion_menu.gd
