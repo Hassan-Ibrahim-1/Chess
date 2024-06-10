@@ -10,6 +10,12 @@ extends Control
 var piece_color: int
 
 func _ready():
+
+	queen_button.connect("pressed", _on_queen_button_pressed)
+	rook_button.connect("pressed", _on_rook_button_pressed)
+	knight_button.connect("pressed", _on_knight_button_pressed)
+	bishop_button.connect("pressed", _on_bishop_button_pressed)
+
 	set_piece_color()
 	position = Vector2(0, 0)
 
@@ -26,3 +32,18 @@ func set_piece_color():
 		rook_button.icon = load("res://assets/1rook.png")
 		bishop_button.icon = load("res://assets/1bishop.png")
 		knight_button.icon = load("res://assets/1knight.png")
+
+func delete():
+	queue_free()
+
+func _on_queen_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.QUEEN)
+
+func _on_rook_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.ROOK)
+	
+func _on_knight_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.KNIGHT)
+
+func _on_bishop_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.BISHOP)

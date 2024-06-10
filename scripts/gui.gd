@@ -2,7 +2,9 @@ class_name GUI
 
 extends Control
 
-var promotion_menu_scene = preload ("res://scenes/promotion_menu.tscn")
+var promotion_menu_scene: PackedScene = preload ("res://scenes/promotion_menu.tscn")
+var promotion_menu: PromotionMenu
+var promotion_menu_enabled := false
 
 @onready var grid_container = $Background/GridContainer
 @onready var color_to_move_text = $Background/ColorToMoveText
@@ -35,10 +37,17 @@ func clear_arrows():
 
 ## Creates a promotion menu at the specified square
 func create_promotion_menu(square: Square, piece_color: int):
-	var promotion_menu: PromotionMenu = promotion_menu_scene.instantiate()
+	promotion_menu = promotion_menu_scene.instantiate()
 	promotion_menu.piece_color = piece_color
 	
 	square.add_child(promotion_menu)
+
+	promotion_menu_enabled = true
+
+func delete_promotion_menu():
+	if promotion_menu_enabled:
+		promotion_menu.delete()
+	promotion_menu_enabled = false
 	
 func _on_piece_move(_square):
 	update_color_to_move_text()

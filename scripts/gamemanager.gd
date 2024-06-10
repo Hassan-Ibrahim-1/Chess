@@ -13,11 +13,19 @@ func _ready():
 	EventBus.connect("release", _on_square_release)
 	EventBus.connect("right_click", _on_square_right_click)
 	EventBus.connect("right_click_release", _on_square_right_click_release)
+	EventBus.connect("promotion_piece_chosen", _on_promotion_piece_chosen)
 	
 	Board.create_board()
 
 func _on_square_click(square: Square):
 	gui.clear_arrows()
+
+	# If the promotion menu is enabled, delete it and stop execution of the function
+	if gui.promotion_menu_enabled:
+		gui.delete_promotion_menu()
+
+		return
+
 	print_debug(square.ID)
 	if (square.piece_on_square != null) and (click_count == 0):
 		click_count = 1
@@ -70,8 +78,14 @@ func _on_square_release(square: Square):
 					# Promotes the pawn to a queen if it is moving to a promotion square
 					var piece_type: int
 					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
-					prev_square_clicked.piece_on_square.promote(piece_type)
-				make_move(square)
+					
+					# Removes piece from board until a signal is emitted
+					prev_square_clicked.remove_piece()
+
+					# prev_square_clicked.piece_on_square.promote(piece_type)
+
+				else:
+					make_move(square)
 		else:
 			make_move(square)
 		
@@ -85,7 +99,7 @@ func _on_square_right_click(mouse_pos: Vector2):
 
 # Records the target square of the arrow
 # The target square is the square that the RMB is released on
-# Calls gui.draw() which draws the arrow
+# Calls gui.draw_arrow() which draws the arrow
 func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 	gui.draw_arrow(arrow_start_pos, mouse_pos)
 	
@@ -93,6 +107,9 @@ func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
+
+func _on_promotion_piece_chosen(piece_type: int):
+	pass
 		
 func make_move(target_square: Square):
 	# Makes a move - uses the global prev_square_clicked as the start square

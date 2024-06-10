@@ -7,3 +7,5 @@ res://scripts/gui.gd
 res://scripts/fenutils.gd
 res://scripts/square.gd
 res://scripts/promotion_menu.gd
+res://scripts/gamemanager.gd
+res://scripts/eventbus.gd
