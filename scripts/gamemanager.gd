@@ -24,6 +24,9 @@ func _on_square_click(square: Square):
 	if gui.promotion_menu_enabled:
 		gui.delete_promotion_menu()
 
+		# Shows the piece that was hidden previously in _on_square_release
+		prev_square_clicked.piece_on_square.show()
+
 		return
 
 	print_debug(square.ID)
@@ -80,7 +83,7 @@ func _on_square_release(square: Square):
 					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
 					
 					# Removes piece from board until a signal is emitted
-					prev_square_clicked.remove_piece()
+					prev_square_clicked.piece_on_square.hide()
 
 					# prev_square_clicked.piece_on_square.promote(piece_type)
 
