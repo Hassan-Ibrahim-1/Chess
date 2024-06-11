@@ -14,19 +14,22 @@ func _ready():
 	EventBus.connect("right_click", _on_square_right_click)
 	EventBus.connect("right_click_release", _on_square_right_click_release)
 	EventBus.connect("promotion_piece_chosen", _on_promotion_piece_chosen)
-	
+
 	Board.create_board()
 
 func _on_square_click(square: Square):
 	gui.clear_arrows()
 
-	# If the promotion menu is enabled, delete it and stop execution of the function
 	if gui.promotion_menu_enabled:
+		# Get the square above the prev_square_clicked and the two squares below it
+		# Include the square itself as well
+		# if is_in_promotion_menu(prev_square_clicked.piece_on_square)
+		# TODO: Only execute this code when a square that is clicked is not the square that the promotion menu is on
 		gui.delete_promotion_menu()
 
 		# Shows the piece that was hidden previously in _on_square_release
-		prev_square_clicked.piece_on_square.show()
-
+		if prev_square_clicked.piece_on_square != null:
+			prev_square_clicked.piece_on_square.show()
 		return
 
 	print_debug(square.ID)
@@ -45,17 +48,21 @@ func _on_square_click(square: Square):
 		click_count = 0
 		
 		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
+			
 			# TODO: get rid of this conditional after all legal moves have been implemented
 			if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 				var legal_moves = Board.generate_moves()
 				if is_move_legal(square, legal_moves):
+
 					# If a pawn is about to promote - make it a queen
 					# TODO: change this later to include all promotion pieces
 					if prev_square_clicked.piece_on_square.promoting:
-						var piece_type: int
 						gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
-						prev_square_clicked.piece_on_square.promote(piece_type)
-					make_move(square)
+					
+						# Removes piece from board until a signal is emitted
+						prev_square_clicked.piece_on_square.hide()
+					else:
+						make_move(square)
 			else:
 				make_move(square)
 			
@@ -72,11 +79,15 @@ func _on_square_release(square: Square):
 	# Even though the piece moved click count is still 1 - this causes bugs - piece not behaving right after dragging
 	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 		click_count = 0
+		
 		# TODO: get rid of this conditional after all legal moves have been implemented
 		if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 			var legal_moves = Board.generate_moves()
+			
 			if is_move_legal(square, legal_moves):
+				
 				if prev_square_clicked.piece_on_square.promoting:
+					
 					# TODO: Change this later to include all possible promotion pieces
 					# Promotes the pawn to a queen if it is moving to a promotion square
 					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
@@ -120,8 +131,26 @@ func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 		square.set_highlight_color()
 
 func _on_promotion_piece_chosen(piece_type: int):
-	prev_square_clicked.piece_on_square.promote(piece_type)
-	prev_square_clicked.piece_on_square.show()
+	if prev_square_clicked.piece_on_square != null:
+		prev_square_clicked.piece_on_square.promote(piece_type)
+		prev_square_clicked.piece_on_square.show()
+		# Make move
+		prev_square_clicked.piece_on_square.promoting = false
+		gui.delete_promotion_menu()
+
+func _on_queen_button_pressed():
+	print_debug("Queen clicked")
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.QUEEN)
+
+func _on_rook_button_pressed():
+	print_debug("Rook pressed")
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.ROOK)
+	
+func _on_knight_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.KNIGHT)
+
+func _on_bishop_button_pressed():
+	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.BISHOP)
 
 func make_move(target_square: Square):
 	# Makes a move - uses the global prev_square_clicked as the start square

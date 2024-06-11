@@ -6,6 +6,7 @@ var promotion_menu_scene: PackedScene = preload ("res://scenes/promotion_menu.ts
 var promotion_menu: PromotionMenu
 var promotion_menu_enabled := false
 
+@onready var background_node = $Background
 @onready var grid_container = $Background/GridContainer
 @onready var color_to_move_text = $Background/ColorToMoveText
 
@@ -39,8 +40,13 @@ func clear_arrows():
 func create_promotion_menu(square: Square, piece_color: int):
 	promotion_menu = promotion_menu_scene.instantiate()
 	promotion_menu.piece_color = piece_color
-	
-	square.add_child(promotion_menu)
+
+	add_child(promotion_menu)
+	move_child(promotion_menu, 0)
+
+	get_parent().move_child(self, 0)
+
+	promotion_menu.set_pos(square.position)
 
 	promotion_menu_enabled = true
 
@@ -48,7 +54,7 @@ func delete_promotion_menu():
 	if promotion_menu_enabled:
 		promotion_menu.delete()
 	promotion_menu_enabled = false
-	
+
 func _on_piece_move(_square):
 	update_color_to_move_text()
 

@@ -85,9 +85,10 @@ func set_icon():
 func promote(p_type: int):
 	if piece_type != Board.PIECE_TYPES.PAWN:
 		return
-		
+
 	piece_type = p_type
 	set_icon()
+	promoting = false
 
 func is_sliding_piece() -> bool:
 	## Checks if the piece is a sliding piece
