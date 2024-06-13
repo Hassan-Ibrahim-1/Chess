@@ -28,8 +28,12 @@ func _on_square_click(square: Square):
 		gui.delete_promotion_menu()
 
 		# Shows the piece that was hidden previously in _on_square_release
-		if prev_square_clicked.piece_on_square != null:
-			prev_square_clicked.piece_on_square.show()
+		# prev_square_clicked is being used because it hasn't been updated to the promotion_square
+		if Board.promotion_piece != null:
+			Board.promotion_piece.show()
+		if Board.promotion_square.piece_on_square != null:
+			Board.promotion_square.piece_on_square.show()
+
 		return
 
 	print_debug(square.ID)
@@ -58,9 +62,16 @@ func _on_square_click(square: Square):
 					# TODO: change this later to include all promotion pieces
 					if prev_square_clicked.piece_on_square.promoting:
 						gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
-					
+						Board.promotion_square = square
+						Board.promotion_piece = prev_square_clicked.piece_on_square
+
 						# Removes piece from board until a signal is emitted
-						prev_square_clicked.piece_on_square.hide()
+						Board.promotion_piece.hide()
+
+						# Removes any piece that may be on the promotion square
+						if Board.promotion_square.piece_on_square != null:
+							Board.promotion_square.piece_on_square.hide()
+
 					else:
 						make_move(square)
 			else:
@@ -92,8 +103,15 @@ func _on_square_release(square: Square):
 					# Promotes the pawn to a queen if it is moving to a promotion square
 					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
 					
+					Board.promotion_square = square
+					Board.promotion_piece = prev_square_clicked.piece_on_square
+
 					# Removes piece from board until a signal is emitted
 					prev_square_clicked.piece_on_square.hide()
+					
+					# Removes any piece that may be on the promotion square
+					if Board.promotion_square.piece_on_square != null:
+						Board.promotion_square.piece_on_square.hide()
 
 				else:
 					make_move(square)
@@ -132,41 +150,28 @@ func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 
 func _on_promotion_piece_chosen(piece_type: int):
 	if prev_square_clicked.piece_on_square != null:
-		prev_square_clicked.piece_on_square.promote(piece_type)
-		prev_square_clicked.piece_on_square.show()
-		# Make move
-		prev_square_clicked.piece_on_square.promoting = false
+		Board.promotion_piece.promote(piece_type)
+		Board.promotion_piece.show()
+
+	# Make move 
 		gui.delete_promotion_menu()
+		make_move(Board.promotion_square)
 
-func _on_queen_button_pressed():
-	print_debug("Queen clicked")
-	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.QUEEN)
-
-func _on_rook_button_pressed():
-	print_debug("Rook pressed")
-	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.ROOK)
-	
-func _on_knight_button_pressed():
-	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.KNIGHT)
-
-func _on_bishop_button_pressed():
-	EventBus.promotion_piece_chosen.emit(Board.PIECE_TYPES.BISHOP)
-
-func make_move(target_square: Square):
+func make_move(target_square: Square, start_square: Square=prev_square_clicked):
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
 	$AudioStreamPlayer2D.play()
 	
-	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
-	Board.move_piece(prev_square_clicked.piece_on_square, move)
+	var move: Move = Move.new(start_square, target_square, start_square.piece_on_square)
+	Board.move_piece(start_square.piece_on_square, move)
 	Board.moves_played.append(move)
 	
 	EventBus.piece_moved.emit(target_square)
 	
-	prev_square_clicked.set_default_color()
+	start_square.set_default_color()
 	target_square.set_highlight_color()
-	prev_square_clicked = target_square
+	start_square = target_square
 
 func is_move_legal(target_square: Square, legal_moves: Array[Move]):
 	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)

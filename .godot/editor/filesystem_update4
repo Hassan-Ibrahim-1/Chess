@@ -11,3 +11,4 @@ res://scripts/gamemanager.gd
 res://scripts/eventbus.gd
 res://scripts/queen_button.gd
 res://scripts/piece.gd
+res://scripts/board.gd

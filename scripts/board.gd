@@ -46,6 +46,10 @@ var direction_offsets: Array[int] = [- 8, 8, - 1, 1, - 9, 9, 7, - 7]
 # Set to the opposite color every move - default is white
 var color_to_move: int = PIECE_COLOR.WHITE
 
+# Square that the promoting pawn is moving to
+var promotion_square: Square
+var promotion_piece: Piece
+
 func _ready():
 	EventBus.connect("piece_moved", _on_piece_move)
 	
