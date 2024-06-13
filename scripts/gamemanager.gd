@@ -13,11 +13,29 @@ func _ready():
 	EventBus.connect("release", _on_square_release)
 	EventBus.connect("right_click", _on_square_right_click)
 	EventBus.connect("right_click_release", _on_square_right_click_release)
-	
+	EventBus.connect("promotion_piece_chosen", _on_promotion_piece_chosen)
+
 	Board.create_board()
 
 func _on_square_click(square: Square):
 	gui.clear_arrows()
+
+	if gui.promotion_menu_enabled:
+		# Get the square above the prev_square_clicked and the two squares below it
+		# Include the square itself as well
+		# if is_in_promotion_menu(prev_square_clicked.piece_on_square)
+		# TODO: Only execute this code when a square that is clicked is not the square that the promotion menu is on
+		gui.delete_promotion_menu()
+
+		# Shows the piece that was hidden previously in _on_square_release
+		# prev_square_clicked is being used because it hasn't been updated to the promotion_square
+		if Board.promotion_piece != null:
+			Board.promotion_piece.show()
+		if Board.promotion_square.piece_on_square != null:
+			Board.promotion_square.piece_on_square.show()
+
+		return
+
 	print_debug(square.ID)
 	if (square.piece_on_square != null) and (click_count == 0):
 		click_count = 1
@@ -34,16 +52,28 @@ func _on_square_click(square: Square):
 		click_count = 0
 		
 		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
+			
 			# TODO: get rid of this conditional after all legal moves have been implemented
 			if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 				var legal_moves = Board.generate_moves()
 				if is_move_legal(square, legal_moves):
+
 					# If a pawn is about to promote - make it a queen
 					# TODO: change this later to include all promotion pieces
 					if prev_square_clicked.piece_on_square.promoting:
-						prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-						prev_square_clicked.piece_on_square.set_icon()
-					make_move(square)
+						gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
+						Board.promotion_square = square
+						Board.promotion_piece = prev_square_clicked.piece_on_square
+
+						# Removes piece from board until a signal is emitted
+						Board.promotion_piece.hide()
+
+						# Removes any piece that may be on the promotion square
+						if Board.promotion_square.piece_on_square != null:
+							Board.promotion_square.piece_on_square.hide()
+
+					else:
+						make_move(square)
 			else:
 				make_move(square)
 			
@@ -60,53 +90,91 @@ func _on_square_release(square: Square):
 	# Even though the piece moved click count is still 1 - this causes bugs - piece not behaving right after dragging
 	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
 		click_count = 0
+		
 		# TODO: get rid of this conditional after all legal moves have been implemented
 		if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 			var legal_moves = Board.generate_moves()
+			
 			if is_move_legal(square, legal_moves):
+				
 				if prev_square_clicked.piece_on_square.promoting:
+					
 					# TODO: Change this later to include all possible promotion pieces
 					# Promotes the pawn to a queen if it is moving to a promotion square
-					prev_square_clicked.piece_on_square.piece_type = Board.PIECE_TYPES.QUEEN
-					prev_square_clicked.piece_on_square.set_icon()
-				make_move(square)
+					gui.create_promotion_menu(square, prev_square_clicked.piece_on_square.piece_color)
+					
+					Board.promotion_square = square
+					Board.promotion_piece = prev_square_clicked.piece_on_square
+
+					# Removes piece from board until a signal is emitted
+					prev_square_clicked.piece_on_square.hide()
+					
+					# Removes any piece that may be on the promotion square
+					if Board.promotion_square.piece_on_square != null:
+						Board.promotion_square.piece_on_square.hide()
+
+				else:
+					make_move(square)
 		else:
 			make_move(square)
+		
+		# if is_move_legal(square, legal_moves):
+			# make_move()
 			
 # Records the square that is right clicked on
 # This square is where the arrow starts
 func _on_square_right_click(mouse_pos: Vector2):
-	arrow_start_pos = mouse_pos
+	
+		arrow_start_pos = mouse_pos
 
 # Records the target square of the arrow
 # The target square is the square that the RMB is released on
-# Calls gui.draw() which draws the arrow
+# Calls gui.draw_arrow() which draws the arrow
 func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
-	gui.draw_arrow(arrow_start_pos, mouse_pos)
+
+	# If the promotion menu is enabled, delete it and stop execution of the function
+	if gui.promotion_menu_enabled:
+		gui.delete_promotion_menu()
+
+		# Shows the piece that was hidden previously in _on_square_release
+		prev_square_clicked.piece_on_square.show()
+
+		return
 	
+	gui.draw_arrow(arrow_start_pos, mouse_pos)
+
 	if square.is_highlighted:
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
-		
-func make_move(target_square: Square):
+
+func _on_promotion_piece_chosen(piece_type: int):
+	if prev_square_clicked.piece_on_square != null:
+		Board.promotion_piece.promote(piece_type)
+		Board.promotion_piece.show()
+
+	# Make move 
+		gui.delete_promotion_menu()
+		make_move(Board.promotion_square)
+
+func make_move(target_square: Square, start_square: Square=prev_square_clicked):
 	# Makes a move - uses the global prev_square_clicked as the start square
 	# Highlights the target square and the original square
 	# sets previous square clicked to the target square
 	$AudioStreamPlayer2D.play()
 	
-	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
-	Board.move_piece(prev_square_clicked.piece_on_square, move)
+	var move: Move = Move.new(start_square, target_square, start_square.piece_on_square)
+	Board.move_piece(start_square.piece_on_square, move)
 	Board.moves_played.append(move)
 	
 	EventBus.piece_moved.emit(target_square)
 	
-	prev_square_clicked.set_default_color()
+	start_square.set_default_color()
 	target_square.set_highlight_color()
-	prev_square_clicked = target_square
+	start_square = target_square
 
 func is_move_legal(target_square: Square, legal_moves: Array[Move]):
-	var move : Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
+	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
 	for legal_move in legal_moves:
 		# TODO: Change this to a function later
 		if move.start_square.ID == legal_move.start_square.ID and move.target_square.ID == legal_move.target_square.ID:

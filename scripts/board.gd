@@ -46,6 +46,10 @@ var direction_offsets: Array[int] = [- 8, 8, - 1, 1, - 9, 9, 7, - 7]
 # Set to the opposite color every move - default is white
 var color_to_move: int = PIECE_COLOR.WHITE
 
+# Square that the promoting pawn is moving to
+var promotion_square: Square
+var promotion_piece: Piece
+
 func _ready():
 	EventBus.connect("piece_moved", _on_piece_move)
 	
@@ -62,12 +66,12 @@ func create_board():
 	## Sets up a full board with the opening position
 	
 	setup_empty_squares()
-	var opening_fen: String = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-	var test_fen: String = "4kb1r/p4ppp/4q3/8/8/1B6/PPP2PPP/2KR4 w ---- 32 20"
+	#var opening_fen: String = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+	var test_fen: String = "rnbq1bnr/ppppPp1p/5kp1/8/8/8/PPP1PPPP/RNBQKBNR w KQ - 0 5"
 	
 	FENUtils.init(square_arr)
-	#FENUtils.load_fen(test_fen)
-	FENUtils.load_fen(opening_fen)
+	FENUtils.load_fen(test_fen)
+	#FENUtils.load_fen(opening_fen)
 
 func setup_empty_squares():
 	## Sets up a board with no pieces

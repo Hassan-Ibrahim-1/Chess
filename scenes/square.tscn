@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/square.gd" id="1_ohsod"]
 
 [node name="Square" type="ColorRect"]
+process_mode = 1
 custom_minimum_size = Vector2(86, 86)
 offset_right = 40.0
 offset_bottom = 40.0
