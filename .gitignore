@@ -1,3 +1,8 @@
 
 .godot/editor/editor_layout.cfg
 .godot/editor/script_editor_cache.cfg
+project.godot
+.godot/editor/project_metadata.cfg
+.godot/editor/filesystem_update4
+.godot/editor/filesystem_cache8
+.godot/editor/editor_layout.cfg
