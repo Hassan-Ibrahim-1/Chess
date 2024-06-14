@@ -41,7 +41,7 @@ func _process(_delta):
 
 func _on_square_click(square: Square):
 	# Enables dragging when a square is clicked
-	if square.piece_on_square == self:
+	if square.piece == self:
 		dragging_enabled = true
 		z_index = 2
 		

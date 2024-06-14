@@ -23,7 +23,7 @@ func _on_square_click(square: Square):
 	if gui.promotion_menu_enabled:
 		# Get the square above the prev_square_clicked and the two squares below it
 		# Include the square itself as well
-		# if is_in_promotion_menu(prev_square_clicked.piece_on_square)
+		# if is_in_promotion_menu(prev_square_clicked.piece)
 		# TODO: Only execute this code when a square that is clicked is not the square that the promotion menu is on
 		gui.delete_promotion_menu()
 
@@ -31,13 +31,13 @@ func _on_square_click(square: Square):
 		# prev_square_clicked is being used because it hasn't been updated to the promotion_square
 		if Board.promotion_piece != null:
 			Board.promotion_piece.show()
-		if Board.promotion_square.piece_on_square != null:
-			Board.promotion_square.piece_on_square.show()
+		if Board.promotion_square.piece != null:
+			Board.promotion_square.piece.show()
 
 		return
 
 	print_debug(square.ID)
-	if (square.piece_on_square != null) and (click_count == 0):
+	if (square.piece != null) and (click_count == 0):
 		click_count = 1
 		
 	elif click_count == 1:
@@ -51,10 +51,10 @@ func _on_square_click(square: Square):
 		
 		click_count = 0
 		
-		if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
+		if (prev_square_clicked.piece != null) and (prev_square_clicked != square):
 			
 			# TODO: get rid of this conditional after all legal moves have been implemented
-			if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
+			if prev_square_clicked.piece.piece_type != Board.PIECE_TYPES.KING:
 				process_move(square)
 			else:
 				var move: Move = Move.new(prev_square_clicked, square)
@@ -71,11 +71,11 @@ func _on_square_release(square: Square):
 	# Then move the piece to the square that the mouse was released on
 	# Click count is set to 0 because the first click sets it to 1 and the mouse release does not count as a click
 	# Even though the piece moved click count is still 1 - this causes bugs - piece not behaving right after dragging
-	if (prev_square_clicked.piece_on_square != null) and (prev_square_clicked != square):
+	if (prev_square_clicked.piece != null) and (prev_square_clicked != square):
 		click_count = 0
 		
 		# TODO: get rid of this conditional after all legal moves have been implemented
-		if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
+		if prev_square_clicked.piece.piece_type != Board.PIECE_TYPES.KING:
 			process_move(square)
 
 		else:
@@ -101,7 +101,7 @@ func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 		gui.delete_promotion_menu()
 
 		# Shows the piece that was hidden previously in _on_square_release
-		prev_square_clicked.piece_on_square.show()
+		prev_square_clicked.piece.show()
 
 		return
 	
@@ -123,25 +123,25 @@ func process_move(target_square: Square):
 	if move.target_square != null:
 		
 		# If a pawn is promoting
-		if move.start_square.piece_on_square.promoting:
+		if move.start_square.piece.promoting:
 			
-			gui.create_promotion_menu(target_square, move.start_square.piece_on_square.piece_color)
+			gui.create_promotion_menu(target_square, move.start_square.piece.piece_color)
 			
 			Board.promotion_square = target_square
-			Board.promotion_piece = move.start_square.piece_on_square
+			Board.promotion_piece = move.start_square.piece
 
 			# Removes piece from board until a signal is emitted
 			Board.promotion_piece.hide()
 			
 			# Removes any piece that may be on the promotion square
-			if Board.promotion_square.piece_on_square != null:
-				Board.promotion_square.piece_on_square.hide()
+			if Board.promotion_square.piece != null:
+				Board.promotion_square.piece.hide()
 
 		else:
 			make_move(move)
 
 func _on_promotion_piece_chosen(piece_type: int):
-	if prev_square_clicked.piece_on_square != null:
+	if prev_square_clicked.piece != null:
 		Board.promotion_piece.promote(piece_type)
 		Board.promotion_piece.show()
 

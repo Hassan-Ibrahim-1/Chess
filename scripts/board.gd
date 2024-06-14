@@ -57,7 +57,7 @@ func _ready():
 
 func move_piece(move: Move):
 	# acts as a buffer for the piece that is moving
-	var piece: Piece = move.start_square.piece_on_square
+	var piece: Piece = move.start_square.piece
 	
 	move.start_square.remove_piece()
 
@@ -130,10 +130,10 @@ func generate_moves() -> Array[Move]:
 	
 	# Loops over all squares
 	for square in square_arr:
-		if square.piece_on_square == null:
+		if square.piece == null:
 			continue
 	
-		var piece: Piece = square.piece_on_square
+		var piece: Piece = square.piece
 		
 		if piece.piece_color == color_to_move:
 			
@@ -169,7 +169,7 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 			
 			var target_square_id: int = start_square.ID + (direction_offsets[direction_index]) * (n + 1)
 			
-			var piece_on_target_square = square_arr[target_square_id].piece_on_square
+			var piece_on_target_square = square_arr[target_square_id].piece
 			
 			# Blocked by a friendly piece - can't move any further in this direction
 			if piece_on_target_square != null:
@@ -220,7 +220,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		
 		var target_square_id: int = start_square.ID + (direction_offsets[direction_index]) * (n + 1)
 		
-		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece
 		
 		# Blocked by any piece - the pawn can't move forward
 		if piece_on_target_square != null:
@@ -233,7 +233,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		
 		var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
 		
-		var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
+		var piece_on_target_square: Piece = square_arr[target_square_id].piece
 		
 		# If there is a piece on an adjacent square
 		# If that piece is an any piece than a capture is possible
@@ -256,7 +256,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		if prev_move.target_square.ID == horizontal_square_id:
 			
 			# Target square is used because that piece has already moved
-			if prev_move.target_square.piece_on_square.piece_type != PIECE_TYPES.PAWN:
+			if prev_move.target_square.piece.piece_type != PIECE_TYPES.PAWN:
 				continue
 			
 			# If the piece has not moved two squares then move on to the next iteration
@@ -334,9 +334,9 @@ func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Arra
 			target_squares.append(square_arr[square_id + direction_offsets[DIRECTION.SOUTH]])
 
 	for target_square in target_squares:
-		if target_square.piece_on_square != null:
+		if target_square.piece != null:
 			# If its a friendly piece then continue
-			if target_square.piece_on_square.piece_color == piece.piece_color:
+			if target_square.piece.piece_color == piece.piece_color:
 				continue
 
 		legal_moves.append(Move.new(start_square, target_square))
@@ -378,7 +378,7 @@ func is_on_starting_square(piece: Piece, piece_square_id: int) -> bool:
 
 func _on_piece_move(target_square: Square):
 	# Determines what color's turn it is
-	if target_square.piece_on_square.piece_color == PIECE_COLOR.WHITE:
+	if target_square.piece.piece_color == PIECE_COLOR.WHITE:
 		color_to_move = PIECE_COLOR.BLACK
 	else:
 		color_to_move = PIECE_COLOR.WHITE

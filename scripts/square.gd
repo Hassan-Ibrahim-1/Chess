@@ -8,7 +8,7 @@ class_name Square
 
 var default_color: Color = color
 var ID: int
-var piece_on_square: Piece = null # Null if there is no piece
+var piece: Piece = null # Null if there is no piece
 var is_highlighted: bool = false
 # Used to add an indicator to display whether a piece can move to this square or not
 var indicate_legal_move: bool = false
@@ -26,16 +26,16 @@ func set_default_color():
 	is_highlighted = false
 	
 func remove_piece():
-	if piece_on_square != null:
+	if piece != null:
 		remove_child(get_children()[0])
-		piece_on_square = null
+		piece = null
 
-func add_piece(piece: Piece) -> bool:
+func add_piece(new_piece: Piece) -> bool:
 	# Returns true if successful - if there was no piece on the square previously
 	# Returns false if there was a piece on the square
-	if piece_on_square == null:
-		piece_on_square = piece
-		add_child(piece)
+	if piece == null:
+		piece = new_piece
+		add_child(new_piece)
 		
 		return true
 		
