@@ -14,6 +14,7 @@ var dragging_enabled: bool = false
 
 # Offset to center the piece to the mouse
 var drag_offset := Vector2( - 50, -50)
+
 var promoting: bool = false
 # Sets up the values needed for a piece scene
 # Called manually

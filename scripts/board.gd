@@ -55,13 +55,16 @@ func _ready():
 	
 	precompute_move_data()
 
-func move_piece(piece: Piece, move: Move):
+func move_piece(move: Move):
 	move.start_square.remove_piece()
 	# Removes any piece that may be on the target square
 	# Thereby capturing that piece
 	move.target_square.remove_piece()
-	move.target_square.add_piece(piece)
+	move.target_square.add_piece(move.piece)
 
+	if move.en_passant_square != null:
+		if is_diagonally_adjacent(move.start_square, move.target_square):
+			move.en_passant_square.remove_piece()
 func create_board():
 	## Sets up a full board with the opening position
 	
@@ -265,19 +268,12 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 				adjacent_direction_index = adjacent_direction_indices[1]
 			
 			var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
-			
-			var piece_on_target_square: Piece = square_arr[target_square_id].piece_on_square
-			
-			# If there is no piece behind the pawn that just moved
-			# Then en passant is possible
-			if piece_on_target_square == null:
-				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
-				# Captures the piece that the pawn just moved besides
-				square_arr[horizontal_square_id].remove_piece()
+
+			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece, square_arr[horizontal_square_id]))
 			
 func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
 	# An array of squares that the knight can possibly move to
-	var target_squares: Array[Square]
+	var target_squares: Array[Square] = []
 
 	# The ID of the square that is squares away from the starting square
 	# Either horizontally or vertically
@@ -346,6 +342,14 @@ func create_square():
 
 func clear_board():
 	square_arr = []
+
+## Checks if a square is diagonally adjacent to another square 
+func is_diagonally_adjacent(square1: Square, square2: Square) -> bool:
+	var adjacent_direction_indices := [4, 5, 6, 7]
+	for index in adjacent_direction_indices:
+		if (square1.ID + direction_offsets[index]) == square2.ID:
+			return true
+	return false
 
 ## This function is only used for pawns
 ## To determine if it should move two squares or just one
