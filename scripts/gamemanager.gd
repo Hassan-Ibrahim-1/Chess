@@ -57,7 +57,7 @@ func _on_square_click(square: Square):
 			if prev_square_clicked.piece_on_square.piece_type != Board.PIECE_TYPES.KING:
 				process_move(square)
 			else:
-				var move: Move = Move.new(prev_square_clicked, square, prev_square_clicked.piece_on_square)
+				var move: Move = Move.new(prev_square_clicked, square)
 				make_move(move)
 			
 	# On new click set previous square color to default
@@ -79,7 +79,7 @@ func _on_square_release(square: Square):
 			process_move(square)
 
 		else:
-			var move: Move = Move.new(prev_square_clicked, square, prev_square_clicked.piece_on_square)
+			var move: Move = Move.new(prev_square_clicked, square)
 			make_move(move)
 		
 		# if is_move_legal(square, legal_moves):
@@ -123,12 +123,12 @@ func process_move(target_square: Square):
 	if move.target_square != null:
 		
 		# If a pawn is promoting
-		if move.piece.promoting:
+		if move.start_square.piece_on_square.promoting:
 			
-			gui.create_promotion_menu(target_square, move.piece.piece_color)
+			gui.create_promotion_menu(target_square, move.start_square.piece_on_square.piece_color)
 			
 			Board.promotion_square = target_square
-			Board.promotion_piece = move.piece
+			Board.promotion_piece = move.start_square.piece_on_square
 
 			# Removes piece from board until a signal is emitted
 			Board.promotion_piece.hide()
@@ -147,7 +147,7 @@ func _on_promotion_piece_chosen(piece_type: int):
 
 	# Make move 
 		gui.delete_promotion_menu()
-		var move: Move = Move.new(prev_square_clicked, Board.promotion_square, prev_square_clicked.piece_on_square)
+		var move: Move = Move.new(prev_square_clicked, Board.promotion_square)
 		make_move(move)
 
 func make_move(move: Move):
@@ -167,7 +167,7 @@ func make_move(move: Move):
 ## Returns the legal_move if the move is legal
 ## Return a move with all parameters set to null if not true
 func is_move_legal(target_square: Square, legal_moves: Array[Move]) -> Move:
-	var move: Move = Move.new(prev_square_clicked, target_square, prev_square_clicked.piece_on_square)
+	var move: Move = Move.new(prev_square_clicked, target_square)
 	for legal_move in legal_moves:
 		# TODO: Change this to a function later
 		if move.start_square.ID == legal_move.start_square.ID and move.target_square.ID == legal_move.target_square.ID:

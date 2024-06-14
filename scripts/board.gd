@@ -56,15 +56,20 @@ func _ready():
 	precompute_move_data()
 
 func move_piece(move: Move):
+	# acts as a buffer for the piece that is moving
+	var piece: Piece = move.start_square.piece_on_square
+	
 	move.start_square.remove_piece()
+
 	# Removes any piece that may be on the target square
 	# Thereby capturing that piece
 	move.target_square.remove_piece()
-	move.target_square.add_piece(move.piece)
+	move.target_square.add_piece(piece)
 
 	if move.en_passant_square != null:
 		if is_diagonally_adjacent(move.start_square, move.target_square):
 			move.en_passant_square.remove_piece()
+
 func create_board():
 	## Sets up a full board with the opening position
 	
@@ -171,7 +176,7 @@ func generate_sliding_moves(start_square: Square, piece: Piece, legal_moves: Arr
 				if piece_on_target_square.piece_color == piece.piece_color:
 					break
 			
-			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+			legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
 			
 			# Blocked by an enemy piece - a capture is possible but can't move any further
 			if piece_on_target_square != null:
@@ -221,7 +226,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		if piece_on_target_square != null:
 				break
 		
-		legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+		legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
 		
 	# Checking for adjacent square captures
 	for adjacent_direction_index in adjacent_direction_indices:
@@ -234,7 +239,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		# If that piece is an any piece than a capture is possible
 		if piece_on_target_square != null:
 			if piece.piece_color != piece_on_target_square.piece_color:
-				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id]))
 	
 	# Checking for en passant
 	for horizontal_direction_index in horizontal_direction_indices:
@@ -250,7 +255,8 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 		
 		if prev_move.target_square.ID == horizontal_square_id:
 			
-			if prev_move.piece.piece_type != PIECE_TYPES.PAWN:
+			# Target square is used because that piece has already moved
+			if prev_move.target_square.piece_on_square.piece_type != PIECE_TYPES.PAWN:
 				continue
 			
 			# If the piece has not moved two squares then move on to the next iteration
@@ -269,7 +275,7 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 			
 			var target_square_id: int = start_square.ID + direction_offsets[adjacent_direction_index]
 
-			legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece, square_arr[horizontal_square_id]))
+			legal_moves.append(Move.new(start_square, square_arr[target_square_id], square_arr[horizontal_square_id]))
 			
 func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
 	# An array of squares that the knight can possibly move to
@@ -333,7 +339,7 @@ func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Arra
 			if target_square.piece_on_square.piece_color == piece.piece_color:
 				continue
 
-		legal_moves.append(Move.new(start_square, target_square, piece))
+		legal_moves.append(Move.new(start_square, target_square))
 
 func create_square():
 	var new_square: Square = square_scene.instantiate()
