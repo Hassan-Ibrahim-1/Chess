@@ -55,12 +55,12 @@ func _ready():
 	
 	precompute_move_data()
 
-func move_piece(piece: Piece, move: Move):
+func move_piece(move: Move):
 	move.start_square.remove_piece()
 	# Removes any piece that may be on the target square
 	# Thereby capturing that piece
 	move.target_square.remove_piece()
-	move.target_square.add_piece(piece)
+	move.target_square.add_piece(move.piece)
 
 func create_board():
 	## Sets up a full board with the opening position

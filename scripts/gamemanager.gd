@@ -156,7 +156,7 @@ func make_move(move: Move):
 	# sets previous square clicked to the target square
 	$AudioStreamPlayer2D.play()
 
-	Board.move_piece(move.piece, move)
+	Board.move_piece(move)
 	Board.moves_played.append(move)
 
 	EventBus.piece_moved.emit(move.target_square)
