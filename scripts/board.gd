@@ -271,13 +271,12 @@ func generate_pawn_moves(start_square: Square, piece: Piece, legal_moves: Array[
 			# If there is no piece behind the pawn that just moved
 			# Then en passant is possible
 			if piece_on_target_square == null:
-				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece))
-				# Captures the piece that the pawn just moved besides
-				square_arr[horizontal_square_id].remove_piece()
+				# The true at the end signals that en_passant is possible
+				legal_moves.append(Move.new(start_square, square_arr[target_square_id], piece, true))
 			
 func generate_knight_moves(start_square: Square, piece: Piece, legal_moves: Array[Move]):
 	# An array of squares that the knight can possibly move to
-	var target_squares: Array[Square]
+	var target_squares: Array[Square] = []
 
 	# The ID of the square that is squares away from the starting square
 	# Either horizontally or vertically
