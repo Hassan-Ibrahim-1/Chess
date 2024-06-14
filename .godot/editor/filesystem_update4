@@ -12,3 +12,4 @@ res://scripts/eventbus.gd
 res://scripts/queen_button.gd
 res://scripts/piece.gd
 res://scripts/board.gd
+res://scripts/move.gd

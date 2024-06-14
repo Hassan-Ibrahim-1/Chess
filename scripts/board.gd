@@ -66,12 +66,12 @@ func create_board():
 	## Sets up a full board with the opening position
 	
 	setup_empty_squares()
-	#var opening_fen: String = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-	var test_fen: String = "rnbq1bnr/ppppPp1p/5kp1/8/8/8/PPP1PPPP/RNBQKBNR w KQ - 0 5"
+	var opening_fen: String = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+	#var test_fen: String = "rnbq1bnr/ppppPp1p/5kp1/8/8/8/PPP1PPPP/RNBQKBNR w KQ - 0 5"
 	
 	FENUtils.init(square_arr)
-	FENUtils.load_fen(test_fen)
-	#FENUtils.load_fen(opening_fen)
+	#FENUtils.load_fen(test_fen)
+	FENUtils.load_fen(opening_fen)
 
 func setup_empty_squares():
 	## Sets up a board with no pieces
