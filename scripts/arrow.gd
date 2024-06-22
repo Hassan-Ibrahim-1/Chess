@@ -27,11 +27,11 @@ func init(p_start: Vector2, p_end: Vector2):
 	var vertical_leg: float = abs(p_end.y - p_start.y)
 	
 	# Processing rotation - rotation that is still being processed
-	var p_rotation = acos(vertical_leg/distance)
+	var p_rotation = acos(vertical_leg / distance)
 	
-	# Right -> left
 	# Flip the angle when the direction is negative
-	if p_end.x < p_start.x: 
+	# Right -> left
+	if p_end.x < p_start.x:
 		p_rotation = -p_rotation
 	
 	# adjust the x value based on rotation
