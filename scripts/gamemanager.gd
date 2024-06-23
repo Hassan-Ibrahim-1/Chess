@@ -23,6 +23,7 @@ func _ready():
 func _on_square_click(square: Square):
 	gui.clear_arrows()
 	gui.clear_highlighted_squares()
+	
 
 	if gui.promotion_menu_enabled:
 		# Get the square above the prev_square_clicked and the two squares below it
@@ -115,7 +116,7 @@ func _on_square_right_click_release(mouse_pos: Vector2, square: Square):
 		square.set_default_color()
 	else:
 		square.set_highlight_color()
-		highlighted_squares.append(square)
+		gui.highlighted_squares.append(square)
 
 ## Checks if a move is legal
 ## If the move is legal then execute the move

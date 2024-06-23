@@ -5,7 +5,7 @@ class_name Square
 @export var alternate_color: Color
 @export var highlight_color: Color
 @export var enable_alternate_color: bool
-var highlighted_squares = []
+
 
 
 
