@@ -11,6 +11,7 @@ var promotion_menu_enabled := false
 @onready var color_to_move_text = $Background/ColorToMoveText
 
 var arrows: Array[Arrow]
+var highlighted_squares = Array[Square]
 
 var arrow_scene = preload ("res://scenes/arrow.tscn")
 # Called when the node enters the scene tree for the first time.
@@ -35,6 +36,11 @@ func clear_arrows():
 	for arrow in arrows:
 		arrow.queue_free()
 	arrows = []
+	
+func clear_highlighted_squares():
+	for square in highlighted_squares:
+		square.set_default_color()
+	highlighted_squares = []
 
 ## Creates a promotion menu at the specified square
 func create_promotion_menu(square: Square, piece_color: int):

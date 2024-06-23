@@ -5,6 +5,10 @@ class_name Square
 @export var alternate_color: Color
 @export var highlight_color: Color
 @export var enable_alternate_color: bool
+var highlighted_squares = []
+
+
+
 
 var default_color: Color = color
 var ID: int
@@ -24,6 +28,7 @@ func set_highlight_color():
 func set_default_color():
 	color = default_color
 	is_highlighted = false
+
 	
 func remove_piece():
 	if piece != null:
